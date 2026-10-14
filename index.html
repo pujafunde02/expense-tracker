@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f3f5ff">
+  <meta name="description" content="A responsive personal expense tracker dashboard.">
+  <title>Spendwise | Expense Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-glow page-glow-one" aria-hidden="true"></div>
+  <div class="page-glow page-glow-two" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Spendwise home">
+        <span class="brand-mark" aria-hidden="true">S</span>
+        <span>spendwise<span class="brand-period">.</span></span>
+      </a>
+      <div class="topbar-actions">
+        <span class="today-label" id="todayLabel"></span>
+        <button class="icon-button theme-toggle" id="themeToggle" type="button" aria-label="Switch to dark mode" title="Toggle color theme">
+          <span id="themeIcon" aria-hidden="true">☾</span>
+        </button>
+        <div class="avatar" aria-label="Your account">Y</div>
+      </div>
+    </header>
+
+    <section class="welcome-row">
+      <div>
+        <p class="eyebrow">YOUR PERSONAL FINANCE SPACE</p>
+        <h1>Good day, <span>there.</span></h1>
+        <p class="welcome-copy">A little clarity goes a long way. Here's your spending at a glance.</p>
+      </div>
+      <button class="button button-primary welcome-add" type="button" id="jumpToForm">
+        <span aria-hidden="true">＋</span> Add an expense
+      </button>
+    </section>
+
+    <section class="summary-grid" aria-label="Expense summary">
+      <article class="summary-card total-card">
+        <div class="summary-heading">
+          <span class="summary-icon violet-icon" aria-hidden="true">↗</span>
+          <span class="summary-label">Total expenses</span>
+        </div>
+        <p class="summary-value" id="totalExpenses">₹0.00</p>
+        <p class="summary-foot">Across all recorded transactions</p>
+        <span class="card-decoration decoration-one" aria-hidden="true"></span>
+      </article>
+      <article class="summary-card transactions-card">
+        <div class="summary-heading">
+          <span class="summary-icon blue-icon" aria-hidden="true">▤</span>
+          <span class="summary-label">Transactions</span>
+        </div>
+        <p class="summary-value" id="transactionCount">0</p>
+        <p class="summary-foot">Expenses you've logged so far</p>
+        <span class="card-decoration decoration-two" aria-hidden="true"></span>
+      </article>
+      <article class="summary-card monthly-card">
+        <div class="summary-heading">
+          <span class="summary-icon green-icon" aria-hidden="true">◷</span>
+          <span class="summary-label">This month</span>
+        </div>
+        <p class="summary-value" id="monthlyExpenses">₹0.00</p>
+        <p class="summary-foot" id="monthCaption">Your current month's spending</p>
+        <span class="card-decoration decoration-three" aria-hidden="true"></span>
+      </article>
+    </section>
+
+    <section class="content-grid">
+      <article class="panel form-panel" id="formPanel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">KEEP IT UP TO DATE</p>
+            <h2 id="formHeading">Add an expense</h2>
+          </div>
+          <span class="heading-icon" aria-hidden="true">✳</span>
+        </div>
+        <p class="panel-description">Capture the little things before they add up.</p>
+
+        <form id="expenseForm" novalidate>
+          <label class="field-label" for="title">Expense title</label>
+          <input class="input-control" id="title" name="title" type="text" maxlength="70" placeholder="e.g. Weekly groceries" autocomplete="off" required>
+
+          <div class="form-two-column">
+            <div>
+              <label class="field-label" for="amount">Amount <span class="field-hint">(₹)</span></label>
+              <div class="amount-input-wrap">
+                <span aria-hidden="true">₹</span>
+                <input class="input-control amount-control" id="amount" name="amount" type="number" min="0.01" step="0.01" placeholder="0.00" inputmode="decimal" required>
+              </div>
+            </div>
+            <div>
+              <label class="field-label" for="category">Category</label>
+              <select class="input-control select-control" id="category" name="category" required>
+                <option value="" disabled selected>Choose one</option>
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="field-label" for="date">Date</label>
+          <input class="input-control" id="date" name="date" type="date" required>
+          <p class="form-error" id="formError" role="alert" aria-live="polite"></p>
+          <div class="form-actions">
+            <button class="button button-primary submit-button" id="submitButton" type="submit">Add Expense <span aria-hidden="true">↗</span></button>
+            <button class="button button-quiet hidden" id="cancelEdit" type="button">Cancel</button>
+          </div>
+        </form>
+        <div class="form-note" id="dataModeNote"><span aria-hidden="true">⌑</span> Your data is saved privately in this browser.</div>
+      </article>
+
+      <article class="panel chart-panel">
+        <div class="panel-heading chart-heading">
+          <div>
+            <p class="eyebrow">WHERE IT GOES</p>
+            <h2>Spending by category</h2>
+          </div>
+          <span class="period-badge">All time</span>
+        </div>
+        <p class="panel-description">A breakdown of your expenses by category.</p>
+        <div class="chart-wrap">
+          <canvas id="categoryChart" role="img" aria-label="Pie chart showing expenses by category"></canvas>
+          <div class="chart-empty hidden" id="chartEmpty">
+            <span aria-hidden="true">◌</span>
+            <p>Your chart will appear here</p>
+            <span>Add an expense to get started</span>
+          </div>
+        </div>
+        <div class="chart-legend" id="chartLegend" aria-label="Chart categories"></div>
+      </article>
+    </section>
+
+    <section class="insights-grid" aria-label="Budget and spending reports">
+      <article class="panel budget-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">A LITTLE PLAN GOES A LONG WAY</p>
+            <h2>Monthly budget</h2>
+          </div>
+          <span class="heading-icon" aria-hidden="true">₹</span>
+        </div>
+        <p class="panel-description" id="budgetMonthLabel">Set a spending limit for this month.</p>
+        <form class="budget-form" id="budgetForm" novalidate>
+          <label class="sr-only" for="budgetAmount">Monthly budget amount in rupees</label>
+          <div class="amount-input-wrap">
+            <span aria-hidden="true">₹</span>
+            <input class="input-control amount-control" id="budgetAmount" name="budget" type="number" min="0.01" step="0.01" placeholder="Set your monthly limit" inputmode="decimal" required>
+          </div>
+          <button class="button button-primary" type="submit">Save budget</button>
+        </form>
+        <div class="budget-status">
+          <div class="budget-status-copy"><span id="budgetSpent">₹0.00 spent</span><strong id="budgetRemaining">Set a budget to track progress</strong></div>
+          <div class="budget-progress" id="budgetProgress" role="progressbar" aria-label="Monthly budget used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <span id="budgetProgressFill"></span>
+          </div>
+          <p class="budget-caption" id="budgetCaption" aria-live="polite">Your monthly progress will appear here.</p>
+        </div>
+      </article>
+
+      <article class="panel report-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">YOUR SPENDING, IN PERSPECTIVE</p>
+            <h2 id="reportTitle">Weekly report</h2>
+          </div>
+          <label class="sr-only" for="reportPeriod">Report period</label>
+          <select class="input-control report-select" id="reportPeriod">
+            <option value="weekly">This week</option>
+            <option value="monthly">This month</option>
+          </select>
+        </div>
+        <p class="panel-description" id="reportRange"></p>
+        <div class="report-chart-wrap">
+          <canvas id="reportChart" role="img" aria-label="Bar chart of expenses for the selected reporting period"></canvas>
+          <div class="chart-empty report-empty hidden" id="reportEmpty">
+            <span aria-hidden="true">◌</span>
+            <p>No expenses in this period</p>
+            <span>Add an expense to build your report</span>
+          </div>
+        </div>
+        <div class="report-summary" aria-live="polite">
+          <span id="reportTransactionCount">0 transactions</span>
+          <strong id="reportTotal">₹0.00</strong>
+        </div>
+      </article>
+    </section>
+
+    <section class="panel expenses-panel" id="expensesPanel">
+      <div class="expenses-header">
+        <div>
+          <p class="eyebrow">YOUR ACTIVITY</p>
+          <h2>Recent expenses <span class="list-count" id="listCount">0</span></h2>
+        </div>
+        <div class="export-actions">
+          <button class="button button-outline" type="button" id="exportCsv" title="Download a CSV spreadsheet"><span aria-hidden="true">⇩</span> Export CSV</button>
+          <button class="button button-outline" type="button" id="exportPdf" title="Download a PDF report"><span aria-hidden="true">▧</span> Download PDF</button>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <label class="search-box" for="searchInput">
+          <span aria-hidden="true">⌕</span>
+          <input id="searchInput" type="search" placeholder="Search expenses..." autocomplete="off">
+        </label>
+        <label class="filter-select-wrap" for="categoryFilter">
+          <span class="sr-only">Filter expenses by category</span>
+          <select class="input-control filter-select" id="categoryFilter">
+            <option value="all">All categories</option>
+            <option value="Food">Food</option>
+            <option value="Travel">Travel</option>
+            <option value="Shopping">Shopping</option>
+            <option value="Bills">Bills</option>
+            <option value="Other">Other</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Amount</th>
+              <th scope="col">Category</th>
+              <th scope="col">Date</th>
+              <th scope="col" class="action-heading">Action</th>
+            </tr>
+          </thead>
+          <tbody id="expenseRows"></tbody>
+        </table>
+        <div class="empty-state hidden" id="emptyState">
+          <span class="empty-illustration" aria-hidden="true">✦</span>
+          <h3 id="emptyTitle">No expenses yet</h3>
+          <p id="emptyMessage">Add your first expense to see it here.</p>
+          <button class="button button-primary empty-add" id="emptyAdd" type="button">Add your first expense</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <span>Made for mindful spending <span class="footer-heart" aria-hidden="true">♥</span></span>
+      <span>Spendwise <span id="footerYear"></span></span>
+    </footer>
+  </main>
+
+  <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+  <script>
+    window.SPENDWISE_CONFIG = {
+      supabaseUrl: "https://YOUR_PROJECT_REF.supabase.co",
+      supabaseAnonKey: "YOUR_SUPABASE_ANON_KEY"
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
